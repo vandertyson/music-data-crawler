@@ -1,5 +1,5 @@
 const { Builder, By, until, ActionSequence, Java } = require('selenium-webdriver');
-var songList = require('./data')
+var songList = require('./name')
 var json2xls = require('json2xls');
 var fs = require('fs')
 var driver;
@@ -27,35 +27,73 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                     atag => {
                                                         driver.wait(until.elementLocated(By.className("progress")), 10000)
                                                             .then(d => {
-                                                                driver.wait(until.elementTextContains(d, "The file is ready")).then(
-                                                                    z => {
-                                                                        atag.getAttribute("href").then(
-                                                                            link => {
-                                                                                console.log(link)
-                                                                                list[index].audio = link;
-                                                                                driver.quit()
-                                                                                index++;
-                                                                                if (index < list.length) {
-                                                                                    getJuiceOfSongs(list, index, callback)
-                                                                                } else {
-                                                                                    if (callback) {
-                                                                                        callback(list)
+                                                                driver.wait(until.elementTextContains(d, "The file is ready"), 10000)
+                                                                    .then(
+                                                                        z => {
+                                                                            atag.getAttribute("href").then(
+                                                                                link => {
+                                                                                    // console.log(link)
+                                                                                    list[index].audio = link;
+                                                                                    console.log(index + "/" + list.length)
+                                                                                    driver.quit()
+                                                                                    index++;
+                                                                                    if (index < list.length) {
+                                                                                        getJuiceOfSongs(list, index, callback)
+                                                                                    } else {
+                                                                                        if (callback) {
+                                                                                            callback(list)
+                                                                                        }
                                                                                     }
                                                                                 }
-                                                                            }
-                                                                        )
+                                                                            )
+                                                                        }
+                                                                    )
+                                                            }).catch(
+                                                                e => {
+                                                                    driver.quit()
+                                                                    index++;
+                                                                    if (index < list.length) {
+                                                                        getJuiceOfSongs(list, index, callback)
+                                                                    } else {
+                                                                        if (callback) {
+                                                                            callback(list)
+                                                                        }
                                                                     }
-                                                                )
-                                                            })
+                                                                }
+                                                            )
                                                     })
                                             }
                                         )
+                                    }
+                                ).catch(
+                                    e => {
+                                        driver.quit()
+                                        index++;
+                                        if (index < list.length) {
+                                            getJuiceOfSongs(list, index, callback)
+                                        } else {
+                                            if (callback) {
+                                                callback(list)
+                                            }
+                                        }
                                     }
                                 )
                             }
                         )
                     })
-            })
+            }).catch(
+                e => {
+                    driver.quit()
+                    index++;
+                    if (index < list.length) {
+                        getJuiceOfSongs(list, index, callback)
+                    } else {
+                        if (callback) {
+                            callback(list)
+                        }
+                    }
+                }
+            )
         }
     )
 }
