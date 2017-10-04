@@ -7,6 +7,10 @@
 - moi file merge-data-{number}.xlsx chua name + artist 500 bai hat. 
 
 # Download audio file: dung trang mp3juice.cc
+- sua duong dan thu muc luu nhac trong juiced.js
+`var downloadFilepath = "D:/songs"; //luu bai hat vao duong dan nay`
+- sua thoi gian doi download xong bai hat (cai nay can chinh theo toc do mang :D)
+`var downloadTime = 15000; //doi 15s download cho moi bai hat`
 - de test download (3 bai) chay download file merge-data-5
 `node juiced.js 5`
 - de download file nhac cua merge-data-1.xlsx chay 
