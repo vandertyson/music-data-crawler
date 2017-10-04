@@ -1,13 +1,32 @@
-const { Builder, By, until, ActionSequence, Java, Key } = require('selenium-webdriver');
+const {
+    Builder,
+    By,
+    until,
+    ActionSequence,
+    Java,
+    Key,
+    Capabilities,
+    Chrome
+} = require('selenium-webdriver');
+var chrome = require('selenium-webdriver/chrome')
 var songList = require('./name')
 var json2xls = require('json2xls');
 var fs = require('fs')
 var driver;
 
-var getJuiceOfSongs = function(list, index, callback) {
-    driver = new Builder()
-        .forBrowser('chrome')
-        .build();
+var downloadTime = 15000; //doi 15s download cho moi bai hat
+var downloadFilepath = "D:/songs"; //luu bai hat vao duong dan nay
+var chromeCapabilities = Capabilities.chrome();
+var preference = {
+    "profile.default_content_settings.popups": 0,
+    "download.default_directory": downloadFilepath
+}
+var chromeOptions = new chrome.Options()
+chromeOptions.setUserPreferences(preference)
+chromeCapabilities.set('chromeOptions', chromeOptions);
+
+var getJuiceOfSongs = function (list, index, callback) {
+    driver = new Builder().withCapabilities(chromeCapabilities).build();
     driver.get('https://www.mp3juices.cc/')
     driver.findElement(By.id('query')).sendKeys(list[index].keyword);
     driver.findElement(By.id('button')).click();
@@ -19,7 +38,7 @@ var getJuiceOfSongs = function(list, index, callback) {
                             name.getText().then(
                                 textName => {
                                     console.log(textName)
-                                    list[index].audio = textName.trim() + ".mp3"
+                                    list[index].audio = downloadFilepath + "/" + textName.trim() + ".mp3"
                                 }
                             )
                         }
@@ -39,27 +58,11 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                                     .then(d => {
                                                                         driver.wait(until.elementTextContains(d, "The file is ready"), 10000)
                                                                             .then(
-                                                                                z => {
-                                                                                    // atag.getAttribute("href").then(
-                                                                                    //     link => {
-                                                                                    //         // console.log(link)
-                                                                                    //         list[index].audio = link;
-                                                                                    //         console.log(index + "/" + list.length)
-                                                                                    //         driver.quit()
-                                                                                    //         index++;
-                                                                                    //         if (index < list.length) {
-                                                                                    //             getJuiceOfSongs(list, index, callback)
-                                                                                    //         } else {
-                                                                                    //             if (callback) {
-                                                                                    //                 callback(list)
-                                                                                    //             }
-                                                                                    //         }
-                                                                                    //     }
-                                                                                    // )
+                                                                                z => {                                                                                    
                                                                                     atag.click().then(
                                                                                         gg => {
                                                                                             driver.get("chrome://downloads/");
-                                                                                            driver.wait(until.elementLocated(By.id("show")), 12000).then(
+                                                                                            driver.wait(until.elementLocated(By.id("show")), downloadTime).then(
                                                                                                 mm => {
                                                                                                     console.log(index + "/" + list.length)
                                                                                                     driver.quit()
@@ -144,10 +147,10 @@ var getJuiceOfSongs = function(list, index, callback) {
     )
 }
 
-getJuiceOfSongs(songList, 0, function(list) {
+getJuiceOfSongs(songList, 0, function (list) {
     var xls = json2xls(list);
     var label = "test"
-    process.argv.forEach(function(val, index, array) {
+    process.argv.forEach(function (val, index, array) {
         if (index == 2) {
             label = val
         }
