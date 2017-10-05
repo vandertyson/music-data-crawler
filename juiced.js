@@ -25,8 +25,9 @@ var chromeOptions = new chrome.Options()
 chromeOptions.setUserPreferences(preference)
 chromeCapabilities.set('chromeOptions', chromeOptions);
 
-var getJuiceOfSongs = function (list, index, callback) {
-    driver = new Builder().withCapabilities(chromeCapabilities).build();
+var getJuiceOfSongs = function(list, index, callback) {
+    // driver = new Builder().withCapabilities(chromeCapabilities).build();
+    driver = new Builder().forBrowser("chrome").build()
     driver.get('https://www.mp3juices.cc/')
     driver.findElement(By.id('query')).sendKeys(list[index].keyword);
     driver.findElement(By.id('button')).click();
@@ -58,37 +59,58 @@ var getJuiceOfSongs = function (list, index, callback) {
                                                                     .then(d => {
                                                                         driver.wait(until.elementTextContains(d, "The file is ready"), 10000)
                                                                             .then(
-                                                                                z => {                                                                                    
+                                                                                z => {
                                                                                     atag.click().then(
                                                                                         gg => {
                                                                                             driver.get("chrome://downloads/");
-                                                                                            driver.wait(until.elementLocated(By.id("show")), downloadTime).then(
-                                                                                                mm => {
-                                                                                                    console.log(index + "/" + list.length)
-                                                                                                    driver.quit()
-                                                                                                    index++;
-                                                                                                    if (index < list.length) {
-                                                                                                        getJuiceOfSongs(list, index, callback)
-                                                                                                    } else {
-                                                                                                        if (callback) {
-                                                                                                            callback(list)
-                                                                                                        }
-                                                                                                    }
+                                                                                            // driver.wait(until.elementLocated(By.id("show")), downloadTime).then(
+                                                                                            //     mm => {
+                                                                                            //         console.log(index + "/" + list.length)
+                                                                                            //         driver.quit()
+                                                                                            //         index++;
+                                                                                            //         if (index < list.length) {
+                                                                                            //             getJuiceOfSongs(list, index, callback)
+                                                                                            //         } else {
+                                                                                            //             if (callback) {
+                                                                                            //                 callback(list)
+                                                                                            //             }
+                                                                                            //         }
+                                                                                            //     }
+                                                                                            // ).catch(
+                                                                                            //     err => {
+                                                                                            //         console.log(index + "/" + list.length)
+                                                                                            //         driver.quit()
+                                                                                            //         index++;
+                                                                                            //         if (index < list.length) {
+                                                                                            //             getJuiceOfSongs(list, index, callback)
+                                                                                            //         } else {
+                                                                                            //             if (callback) {
+                                                                                            //                 callback(list)
+                                                                                            //             }
+                                                                                            //         }
+                                                                                            //     }
+
+                                                                                            // )
+                                                                                            driver.wait(until.elementLocated(By.tagName("downloads-manager"))).then(
+                                                                                                d1 => {
+                                                                                                    console.log("ok1")
+                                                                                                    console.log(d1.shadowRoot)
+                                                                                                        // driver.wait(until.elementLocated(By.id("content")))
+                                                                                                        // d1.findElement(By.tagName("downloads-item"))
+                                                                                                        .then(
+                                                                                                            d2 => {
+                                                                                                                console.log("ok2")
+                                                                                                            }
+                                                                                                        ).catch(
+                                                                                                            e2 => {
+                                                                                                                console.log("fail2")
+                                                                                                            }
+                                                                                                        )
                                                                                                 }
                                                                                             ).catch(
-                                                                                                err => {
-                                                                                                    console.log(index + "/" + list.length)
-                                                                                                    driver.quit()
-                                                                                                    index++;
-                                                                                                    if (index < list.length) {
-                                                                                                        getJuiceOfSongs(list, index, callback)
-                                                                                                    } else {
-                                                                                                        if (callback) {
-                                                                                                            callback(list)
-                                                                                                        }
-                                                                                                    }
+                                                                                                e1 => {
+                                                                                                    console.log("fail1")
                                                                                                 }
-
                                                                                             )
                                                                                         }
                                                                                     )
@@ -147,10 +169,10 @@ var getJuiceOfSongs = function (list, index, callback) {
     )
 }
 
-getJuiceOfSongs(songList, 0, function (list) {
+getJuiceOfSongs(songList, 0, function(list) {
     var xls = json2xls(list);
     var label = "test"
-    process.argv.forEach(function (val, index, array) {
+    process.argv.forEach(function(val, index, array) {
         if (index == 2) {
             label = val
         }
