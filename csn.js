@@ -30,9 +30,9 @@ watcher.on('change', function (path) {
     lamtiep()
 })
 
-
-var loadTime = 5000
+var loadTime = 30000
 var downloadFilepath = "D:/csn"; //luu bai hat vao duong dan nay
+
 var chromeCapabilities = Capabilities.chrome();
 var preference = {
     "profile.default_content_settings.popups": 0,
@@ -42,9 +42,7 @@ var chromeOptions = new chrome.Options()
 chromeOptions.setUserPreferences(preference)
 chromeCapabilities.set('chromeOptions', chromeOptions);
 driver = new Builder().withCapabilities(chromeCapabilities).build();
-// driver = new Builder().forBrowser("chrome").build()    
-// driver.manage().timeouts().setScriptTimeout(2000)
-driver.manage().timeouts().pageLoadTimeout(20000)
+driver.manage().timeouts().pageLoadTimeout(loadTime)
 
 var lamtiep = function () {
     console.log((index + 1) + "/" + songList.length)
