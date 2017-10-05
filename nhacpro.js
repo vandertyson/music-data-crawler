@@ -24,11 +24,22 @@ var preference = {
 var chromeOptions = new chrome.Options()
 chromeOptions.setUserPreferences(preference)
 chromeCapabilities.set('chromeOptions', chromeOptions);
+var stopLoad = function() {
+    // driver.findElement(By.tagName("body")).sendKeys(Key.ESCAPE);
+    driver.executeScript("window.stop()")
+        // driver.executeScript("var t = window.stop();")
+        // driver.findElement(By.tagName("body")).sendKeys(Keys.ARROW_DOWN);
+        // var action = new ActionSequence(driver)
+
+}
 
 var getJuiceOfSongs = function(list, index, callback) {
     // driver = new Builder().withCapabilities(chromeCapabilities).build();
     driver = new Builder().forBrowser("chrome").build()
     driver.get("http://search.chiasenhac.vn/search.php?s=" + list[index].keyword + "&cat=music")
+    setTimeout(function() {
+        stopLoad();
+    }, 1000)
     driver.wait(until.elementLocated(By.className("tbtable")), 10000).then(
         d1 => {
             d1.findElements(By.tagName("tr")).then(
@@ -55,43 +66,57 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                 }
                                             )
                                         d4[0].findElement(By.tagName("a"))
-                                            .click()
+                                            .getAttribute("href")
                                             .then(
                                                 d7 => {
-                                                    driver.wait(until.elementLocated(By.className("pl_center")), 10000).then(
-                                                        d8 => {
-                                                            driver.wait(until.elementLocated(By.className("pl-c1")), 10000)
-                                                                .findElement(By.tagName("div"))
-                                                                .findElements(By.tagName("a"))
-                                                                .then(
-                                                                    d9 => {
-                                                                        d9[2].click().then(
-                                                                            d10 => {
-                                                                                driver.wait(until.elementLocated(By.className("tip-text")), 10000000)
-                                                                                    .then(
-                                                                                        d11 => {
-                                                                                            d11.findElement(By.tagName("div"))
-                                                                                                .findElement(By.tagName("b"))
-                                                                                                .findElements(By.tagName("a"))
-                                                                                                .then(
-                                                                                                    d13 => {
-                                                                                                        console.log("a")
-                                                                                                        d13[0].getAttribute("href").then(
-                                                                                                            d14 => {
-                                                                                                                console.log(d14)
+                                                    driver.get(d7)
+                                                    setTimeout(function() {
+                                                        stopLoad();
+                                                    }, 1000)
+                                                    driver.wait(until.elementLocated(By.className("pl_center")), 10000)
+                                                        .then(
+                                                            d8 => {
+                                                                driver.wait(until.elementLocated(By.className("pl-c1")), 10000)
+                                                                    .findElement(By.tagName("div"))
+                                                                    .findElements(By.tagName("a"))
+                                                                    .then(
+                                                                        d9 => {
+                                                                            d9[2].getAttribute("href")
+                                                                                .then(
+                                                                                    d10 => {
+                                                                                        driver.get(d10)
+                                                                                        setTimeout(function() {
+                                                                                            console.log("dm")
+                                                                                            stopLoad();
+                                                                                        }, 1000)
+                                                                                        driver.wait(until.elementLocated(By.className("pl_center")), 10000)
+                                                                                            .then(
+                                                                                                d10 => {
+                                                                                                    driver.wait(until.elementLocated(By.className("pl-cr")), 10000)
+                                                                                                        .findElement(By.className("tip-cp4"))
+                                                                                                        .findElement(By.className("tip-text"))
+                                                                                                        .findElement(By.tagName("div"))
+                                                                                                        // .findElement(By.className("genmed"))
+                                                                                                        // .getText()
+                                                                                                        // .then(t => console.log(t))
+                                                                                                        .findElements(By.tagName("b"))
+                                                                                                        // .findElement(By.tagName("a"))
+                                                                                                        .then(
+                                                                                                            d11 => {
+                                                                                                                d11[1].findElement(By.tagName("a"))
+                                                                                                                    .then(
+                                                                                                                        d12 => { d12.click() }
+                                                                                                                    )
                                                                                                             }
                                                                                                         )
-                                                                                                    }
-                                                                                                )
-
-                                                                                        }
-                                                                                    )
-                                                                            }
-                                                                        )
-                                                                    }
-                                                                )
-                                                        }
-                                                    )
+                                                                                                }
+                                                                                            )
+                                                                                    }
+                                                                                )
+                                                                        }
+                                                                    )
+                                                            }
+                                                        )
                                                 }
                                             )
                                     }
