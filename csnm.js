@@ -17,7 +17,11 @@ var chokidar = require('chokidar');
 var index = 0;
 var errorDownload = []
 
-var watcher = chokidar.watch('D:/csnm', {
+
+var loadTime = 10000
+var downloadFilepath = "D:/csnm"; //luu bai hat vao duong dan nay
+
+var watcher = chokidar.watch(downloadFilepath, {
     persistent: true
 });
 
@@ -30,8 +34,7 @@ watcher.on('change', function (path) {
     lamtiep()
 })
 
-var loadTime = 10000
-var downloadFilepath = "D:/csnm"; //luu bai hat vao duong dan nay
+
 
 var chromeCapabilities = Capabilities.chrome();
 var preference = {
