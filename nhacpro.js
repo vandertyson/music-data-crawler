@@ -24,22 +24,24 @@ var preference = {
 var chromeOptions = new chrome.Options()
 chromeOptions.setUserPreferences(preference)
 chromeCapabilities.set('chromeOptions', chromeOptions);
-var stopLoad = function() {
+var stopLoad = function () {
     // driver.findElement(By.tagName("body")).sendKeys(Key.ESCAPE);
-    driver.executeScript("window.stop()")
-        // driver.executeScript("var t = window.stop();")
-        // driver.findElement(By.tagName("body")).sendKeys(Keys.ARROW_DOWN);
-        // var action = new ActionSequence(driver)
-
+    // driver.executeScript("console.log(window)")
+    setTimeout(function(){
+        // driver.executeScript("window.stop()")
+        // driver.executeScript("var t = window.stop(); console.log(t)")
+        driver.findElement(By.tagName("body")).sendKeys(Key.ESCAPE)
+    },3000)    
+    // driver.executeScript("var t = window.stop();")
+    // driver.findElement(By.tagName("body")).sendKeys(Keys.ARROW_DOWN);
+    // var action = new ActionSequence(driver)
 }
 
-var getJuiceOfSongs = function(list, index, callback) {
+var getJuiceOfSongs = function (list, index, callback) {
     // driver = new Builder().withCapabilities(chromeCapabilities).build();
     driver = new Builder().forBrowser("chrome").build()
-    driver.get("http://search.chiasenhac.vn/search.php?s=" + list[index].keyword + "&cat=music")
-    setTimeout(function() {
-        stopLoad();
-    }, 1000)
+    stopLoad();
+    driver.get("http://search.chiasenhac.vn/search.php?s=" + list[index].keyword + "&cat=music")    
     driver.wait(until.elementLocated(By.className("tbtable")), 10000).then(
         d1 => {
             d1.findElements(By.tagName("tr")).then(
@@ -50,6 +52,7 @@ var getJuiceOfSongs = function(list, index, callback) {
                                 .findElements(By.tagName("p"))
                                 .then(
                                     d4 => {
+                                        console.log("dd")
                                         d4[0].findElement(By.tagName("a"))
                                             .getText()
                                             .then(
@@ -70,9 +73,7 @@ var getJuiceOfSongs = function(list, index, callback) {
                                             .then(
                                                 d7 => {
                                                     driver.get(d7)
-                                                    setTimeout(function() {
-                                                        stopLoad();
-                                                    }, 1000)
+                                                    // stopLoad();
                                                     driver.wait(until.elementLocated(By.className("pl_center")), 10000)
                                                         .then(
                                                             d8 => {
@@ -85,10 +86,7 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                                                 .then(
                                                                                     d10 => {
                                                                                         driver.get(d10)
-                                                                                        setTimeout(function() {
-                                                                                            console.log("dm")
-                                                                                            stopLoad();
-                                                                                        }, 1000)
+                                                                                        // stopLoad();
                                                                                         driver.wait(until.elementLocated(By.className("pl_center")), 10000)
                                                                                             .then(
                                                                                                 d10 => {
@@ -105,7 +103,9 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                                                                             d11 => {
                                                                                                                 d11[1].findElement(By.tagName("a"))
                                                                                                                     .then(
-                                                                                                                        d12 => { d12.click() }
+                                                                                                                        d12 => {
+                                                                                                                            d12.click()
+                                                                                                                        }
                                                                                                                     )
                                                                                                             }
                                                                                                         )
@@ -120,6 +120,7 @@ var getJuiceOfSongs = function(list, index, callback) {
                                                 }
                                             )
                                     }
+
                                 )
                         }
                     )
@@ -271,10 +272,10 @@ var getJuiceOfSongs = function(list, index, callback) {
     // )
 }
 
-getJuiceOfSongs(songList, 0, function(list) {
+getJuiceOfSongs(songList, 0, function (list) {
     var xls = json2xls(list);
     var label = "test"
-    process.argv.forEach(function(val, index, array) {
+    process.argv.forEach(function (val, index, array) {
         if (index == 2) {
             label = val
         }

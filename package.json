@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "chokidar": "^1.7.0",
     "chromedriver": "^2.32.3",
     "icg-json-to-xlsx": "^0.2.5",
     "json2xls": "^0.1.2",

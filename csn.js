@@ -40,6 +40,7 @@ var preference = {
 }
 var chromeOptions = new chrome.Options()
 chromeOptions.setUserPreferences(preference)
+// chromeOptions.setMobileEmulation(mobileSetting)
 chromeCapabilities.set('chromeOptions', chromeOptions);
 driver = new Builder().withCapabilities(chromeCapabilities).build();
 driver.manage().timeouts().pageLoadTimeout(loadTime)
